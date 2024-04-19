@@ -10,8 +10,12 @@ export const signup = async (req, res, next) => {
     // Check if the email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      // If email already exists, create an error object with the email attached
-      const error = errorHandler(400, "Email already exists");
+      // If email already exists, create an error with a custom message.
+      const error = errorHandler(400, "Email already exists.");
+      throw error; // Throw the error
+    } else if (password.length < 6) {
+      //If no password entered, create an error with a custom message.
+      const error = errorHandler(400, "Password not valid.");
       throw error; // Throw the error
     }
 
@@ -51,6 +55,57 @@ export const signin = async (req, res, next) => {
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const google = async (req, res, next) => {
+  console.log("google account info", req.body);
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      // Update the avatar with the req.body.photo value
+      if (
+        user.avatar ===
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" &&
+        req.body.photo
+      ) {
+        user.avatar = req.body.photo;
+        await user.save();
+      }
+
+      //if the email already exists in the database, we will generate a token and send it to the client as access_token
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = user._doc;
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+      console.log("user already here", user);
+    } else {
+      //if email doesn't exist generate a password for the user and add the user to the database
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        username: req.body.name.split(" ").join("").toLowerCase(),
+        email: req.body.email,
+        password: hashedPassword,
+        avatar: req.body.photo,
+      });
+
+      //save the new user
+      await newUser.save();
+      //generate a token and send it as a cookie access_token to the client
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = newUser._doc;
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    }
   } catch (error) {
     next(error);
   }
