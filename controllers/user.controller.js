@@ -1,5 +1,5 @@
-import User from "../models/user.model";
-import { errorHandler } from "../utils/error";
+import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
 
 export const test = (req, res) => {
@@ -7,6 +7,7 @@ export const test = (req, res) => {
 };
 
 export const updateUser = async (req, res, next) => {
+  console.log("pls work")
   if(req.user.id !== req.params.id) return next(errorHandler(401, "you can only update your account!"))
 
   try {
@@ -22,6 +23,7 @@ export const updateUser = async (req, res, next) => {
         avatar: req.body.avatar
       }
     }, {new:true})
+    console.log("yes")
 
     const { password, ...rest } = updatedUser._doc
     res.status(200).json(rest)
