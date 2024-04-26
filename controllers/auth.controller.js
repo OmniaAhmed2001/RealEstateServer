@@ -68,8 +68,7 @@ export const google = async (req, res, next) => {
       // Update the avatar with the req.body.photo value
       if (
         user.avatar ===
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" &&
-        req.body.photo
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
       ) {
         user.avatar = req.body.photo;
         await user.save();
