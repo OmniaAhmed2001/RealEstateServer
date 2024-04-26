@@ -3,13 +3,17 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+
 import listingRouter from "./routes/listing.route.js";
+
+import cookieParser from "cookie-parser";
+
 
 dotenv.config();
 
 mongoose
   .connect(
-    `mongodb+srv://lmaoEstate:lmaoEstate@clusterlmao.r6mnu9u.mongodb.net/?retryWrites=true&w=majority&appName=ClusterLmao`
+    process.env.MONGO
   )
   .then(() => {
     console.log("Connected to db");
@@ -21,6 +25,8 @@ mongoose
 const app = express();
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.listen(3000, () => {
   console.log(`Server running on port http://localhost:3000`);
