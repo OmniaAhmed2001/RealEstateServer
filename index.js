@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(
@@ -29,13 +30,13 @@ app.use(cors())
 
 app.use(cookieParser());
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:3000`);
 });
 
-app.use("/api/user", userRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/listing", listingRouter);
+app.use("/user", userRouter);
+app.use("/auth", authRouter);
+app.use("/listing", listingRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
