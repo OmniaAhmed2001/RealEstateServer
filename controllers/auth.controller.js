@@ -50,11 +50,12 @@ export const signin = async (req, res, next) => {
         )
       );
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    console.log(token)
     const { password: pass, ...rest } = validUser._doc;
     res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, { httpOnly: true,secure:false,domain:"localhost",path:"/" })
       .status(200)
-      .json(rest);
+      .json({...rest,token});
   } catch (error) {
     next(error);
   }
@@ -76,9 +77,10 @@ export const google = async (req, res, next) => {
 
       //if the email already exists in the database, we will generate a token and send it to the client as access_token
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      console.log(token)
       const { password: pass, ...rest } = user._doc;
       res
-        .cookie("access_token", token, { httpOnly: true })
+        .cookie("access_token", token, { secure: false })
         .status(200)
         .json(rest);
       console.log("user already here", user);
@@ -118,3 +120,4 @@ export const signOut = async (req, res, next) => {
     next(error);
   }
 };
+
