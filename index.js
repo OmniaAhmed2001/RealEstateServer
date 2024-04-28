@@ -8,7 +8,11 @@ import listingRouter from "./routes/listing.route.js";
 
 import cookieParser from "cookie-parser";
 
+import cors from "cors";
+
+
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(process.env.MONGO)
@@ -22,10 +26,11 @@ mongoose
 const app = express();
 
 app.use(express.json());
+app.use(cors({ credentials: "true" }));
 
 app.use(cookieParser());
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:3000`);
 });
 
