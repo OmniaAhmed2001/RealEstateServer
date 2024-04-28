@@ -13,9 +13,7 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect(
-    process.env.MONGO
-  )
+  .connect(process.env.MONGO)
   .then(() => {
     console.log("Connected to db");
   })
@@ -26,7 +24,7 @@ mongoose
 const app = express();
 
 app.use(express.json());
-app.use(cors())
+app.use(cors({ credentials: "true" }));
 
 app.use(cookieParser());
 
