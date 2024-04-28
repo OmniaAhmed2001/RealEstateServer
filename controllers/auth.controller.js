@@ -53,7 +53,7 @@ export const signin = async (req, res, next) => {
     console.log(token)
     const { password: pass, ...rest } = validUser._doc;
     res
-      .cookie("access_token", token, { httpOnly: true,secure:false,domain:"localhost",path:"/" })
+      .cookie("access_token", token, { httpOnly: true,secure:false})
       .status(200)
       .json({...rest,token});
   } catch (error) {
@@ -80,7 +80,7 @@ export const google = async (req, res, next) => {
       console.log(token)
       const { password: pass, ...rest } = user._doc;
       res
-        .cookie("access_token", token, { secure: false })
+        .cookie("access_token", token, { httpOnly: true, secure: false })
         .status(200)
         .json(rest);
       console.log("user already here", user);
