@@ -1,4 +1,3 @@
-
 import jwt from "jsonwebtoken";
 import { errorHandler } from "./error.js";
 export const verifyToken = (req, res, next) => {
@@ -9,7 +8,7 @@ export const verifyToken = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(errorHandler(403, "Forbidden"));
     req.user = user;
-  }); 
-  console.log("verify")
+  });
+  console.log("verify");
   next();
 };
