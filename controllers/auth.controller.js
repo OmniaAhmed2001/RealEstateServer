@@ -50,12 +50,12 @@ export const signin = async (req, res, next) => {
         )
       );
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-    console.log(token)
+    console.log(token);
     const { password: pass, ...rest } = validUser._doc;
     res
-      .cookie("access_token", token, { httpOnly: true,secure:false})
+      .cookie("access_token", token, { httpOnly: true, secure: false })
       .status(200)
-      .json({...rest,token});
+      .json({ message: "success", ...rest, token });
   } catch (error) {
     next(error);
   }
@@ -77,12 +77,11 @@ export const google = async (req, res, next) => {
 
       //if the email already exists in the database, we will generate a token and send it to the client as access_token
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      console.log(token)
       const { password: pass, ...rest } = user._doc;
       res
         .cookie("access_token", token, { httpOnly: true, secure: false })
         .status(200)
-        .json(rest);
+        .json({ message: "success", ...rest, token });
       console.log("user already here", user);
     } else {
       //if email doesn't exist generate a password for the user and add the user to the database
@@ -120,4 +119,3 @@ export const signOut = async (req, res, next) => {
     next(error);
   }
 };
-
