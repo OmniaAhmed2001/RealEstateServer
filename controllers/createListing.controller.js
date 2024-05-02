@@ -1,3 +1,7 @@
+import stripe from "stripe";
+
+const stripeInstance =
+  "sk_test_51PBlgVLH2VC6EtDif54PPVv54AzYjCKYYUYKaER2ZL86mSehgMJn9YoIY0zv2g9nIYv1bBtKWjvTxxsjZHA8Npfg00ewJDo680";
 import Listing from "../models/listing.model.js";
 import { errorHandler } from "../utils/error.js";
 
@@ -128,12 +132,78 @@ export const maxPrice = async (req, res, next) => {
         ? maxRegularPriceListing[0].regularPrice
         : null;
     console.log("Maximum Regular Price:", maxRegularPrice);
-    res
-      .status(200)
-      .json({
-        maxPrice: maxRegularPriceListing[0].regularPrice,
-        name: maxRegularPriceListing[0].name,
-      });
+    res.status(200).json({
+      maxPrice: maxRegularPriceListing[0].regularPrice,
+      name: maxRegularPriceListing[0].name,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const sendOrder = async (req, res, next) => {
+  try {
+    const price = {
+      currency: "usd",
+      product_data: {
+        name: req.body.name,
+      },
+      unit_amount:
+        req.body.discountPrice > 0
+          ? req.body.discountPrice * 100
+          : req.body.regularPrice * 100,
+    };
+    if (req.body.type === "rent") {
+      price.recurring = {
+        interval: "month", // Billing interval (day, week, month, or year)
+        interval_count: 1, // Number of intervals between subscription billings
+      };
+    }
+    const session = await stripe(stripeInstance).checkout.sessions.create({
+      line_items: [
+        {
+          price_data: price,
+          quantity: 1,
+        },
+      ],
+      mode: req.body.type === "rent" ? "subscription" : "payment",
+      success_url: `${process.env.FRONT_END_URL}/listing/${req.body._id}?success={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONT_END_URL}/listing/${req.body._id}`,
+    });
+    // console.log(session);
+    res.status(200).json({ session: session.url });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const paymentUpdateListing = async (req, res, next) => {
+  try {
+    const session = await stripe(stripeInstance).checkout.sessions.retrieve(req.body.session_ID);
+    if (session.payment_status !== "paid") {
+      return res.status(400).json({ message: "Payment not completed" });
+    }
+    console.log("sessionUpdate: ", session)
+
+    const listing = await Listing.findById(req.params.id);
+    // Check the type property
+    console.log("Listing:", listing)
+    const condition = listing.type === "rent" ? "rented" : "sold";
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          condition: condition,
+        },
+        $push: {
+          previousBuyers: req.body.user_id,
+        },
+      },
+      { new: true}
+    );
+    console.log({updatedListing});
+    res.status(200).json(updatedListing);
   } catch (error) {
     next(error);
   }

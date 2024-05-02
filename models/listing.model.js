@@ -42,6 +42,12 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    condition: {
+      type: String,
+    },
+    previousBuyers: {
+      type: Array,
+    },
     offer: {
       type: Boolean,
       required: true,

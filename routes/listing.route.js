@@ -8,6 +8,8 @@ import {
   getListings,
   countListing,
   maxPrice,
+  sendOrder,
+  paymentUpdateListing,
 } from "../controllers/createListing.controller.js";
 
 const listingRouter = express.Router();
@@ -19,6 +21,8 @@ listingRouter.get("/get/countListings", countListing);
 listingRouter.get("/get/maxPrice", maxPrice);
 listingRouter.get("/get/:id", getListing);
 listingRouter.get("/get", getListings);
+listingRouter.post("/create-checkout-session", verifyToken, sendOrder);
+listingRouter.post(`/updatePayment/:id`, verifyToken, paymentUpdateListing);
 
 // listingRouter.post("/create-paypal-order", verifyToken, sendOrder);
 
