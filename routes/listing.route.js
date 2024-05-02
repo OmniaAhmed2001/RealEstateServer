@@ -24,6 +24,6 @@ listingRouter.get("/get", getListings);
 listingRouter.post("/create-checkout-session", verifyToken, sendOrder);
 listingRouter.post(`/updatePayment/:id`, verifyToken, paymentUpdateListing);
 
-// listingRouter.post("/create-paypal-order", verifyToken, sendOrder);
+
 
 export default listingRouter;
