@@ -7,6 +7,7 @@ import {
   getListing,
   getListings,
   countListing,
+  maxPrice,
 } from "../controllers/createListing.controller.js";
 
 const listingRouter = express.Router();
@@ -14,11 +15,11 @@ const listingRouter = express.Router();
 listingRouter.post("/create", verifyToken, createListing);
 listingRouter.delete("/delete/:id", verifyToken, deleteListing);
 listingRouter.post("/update/:id", verifyToken, updateListing);
+listingRouter.get("/get/countListings", countListing);
+listingRouter.get("/get/maxPrice", maxPrice);
 listingRouter.get("/get/:id", getListing);
 listingRouter.get("/get", getListings);
-listingRouter.get("/get/countListings", countListing);
 
-listingRouter.post("/create-paypal-order", verifyToken, sendOrder);
-
+// listingRouter.post("/create-paypal-order", verifyToken, sendOrder);
 
 export default listingRouter;
