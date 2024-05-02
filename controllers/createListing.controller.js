@@ -1,7 +1,6 @@
 import stripe from "stripe";
 
-const stripeInstance =
-  "sk_test_51PBlgVLH2VC6EtDif54PPVv54AzYjCKYYUYKaER2ZL86mSehgMJn9YoIY0zv2g9nIYv1bBtKWjvTxxsjZHA8Npfg00ewJDo680";
+
 import Listing from "../models/listing.model.js";
 import { errorHandler } from "../utils/error.js";
 
@@ -159,7 +158,7 @@ export const sendOrder = async (req, res, next) => {
         interval_count: 1, // Number of intervals between subscription billings
       };
     }
-    const session = await stripe(stripeInstance).checkout.sessions.create({
+    const session = await stripe(process.env.STRIPE).checkout.sessions.create({
       line_items: [
         {
           price_data: price,
@@ -179,7 +178,7 @@ export const sendOrder = async (req, res, next) => {
 
 export const paymentUpdateListing = async (req, res, next) => {
   try {
-    const session = await stripe(stripeInstance).checkout.sessions.retrieve(req.body.session_ID);
+    const session = await stripe(process.env.STRIPE).checkout.sessions.retrieve(req.body.session_ID);
     if (session.payment_status !== "paid") {
       return res.status(400).json({ message: "Payment not completed" });
     }
