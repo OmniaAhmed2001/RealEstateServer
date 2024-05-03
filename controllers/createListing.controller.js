@@ -1,6 +1,5 @@
 import stripe from "stripe";
 
-
 import Listing from "../models/listing.model.js";
 import { errorHandler } from "../utils/error.js";
 
@@ -148,7 +147,7 @@ export const sendOrder = async (req, res, next) => {
         name: req.body.name,
       },
       unit_amount:
-        req.body.discountPrice > 0
+        req.body.offer && req.body.discountPrice > 0
           ? req.body.discountPrice * 100
           : req.body.regularPrice * 100,
     };
@@ -178,15 +177,17 @@ export const sendOrder = async (req, res, next) => {
 
 export const paymentUpdateListing = async (req, res, next) => {
   try {
-    const session = await stripe(process.env.STRIPE).checkout.sessions.retrieve(req.body.session_ID);
+    const session = await stripe(process.env.STRIPE).checkout.sessions.retrieve(
+      req.body.session_ID
+    );
     if (session.payment_status !== "paid") {
       return res.status(400).json({ message: "Payment not completed" });
     }
-    console.log("sessionUpdate: ", session)
+    console.log("sessionUpdate: ", session);
 
     const listing = await Listing.findById(req.params.id);
     // Check the type property
-    console.log("Listing:", listing)
+    console.log("Listing:", listing);
     const condition = listing.type === "rent" ? "rented" : "sold";
 
     const updatedListing = await Listing.findByIdAndUpdate(
@@ -199,9 +200,9 @@ export const paymentUpdateListing = async (req, res, next) => {
           previousBuyers: req.body.user_id,
         },
       },
-      { new: true}
+      { new: true }
     );
-    console.log({updatedListing});
+    console.log({ updatedListing });
     res.status(200).json(updatedListing);
   } catch (error) {
     next(error);
