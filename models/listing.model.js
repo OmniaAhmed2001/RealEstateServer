@@ -56,6 +56,9 @@ const listingSchema = new mongoose.Schema(
       type: Array,
       required: true,
     },
+    review: {
+      type: Array,
+    },
     userRef: {
       type: String,
       required: true,

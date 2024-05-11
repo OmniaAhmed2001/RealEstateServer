@@ -5,6 +5,8 @@ import {
   deleteListing,
   updateListing,
   getListing,
+  addReview,
+
   getListings,
   countListing,
   maxPrice,
@@ -20,6 +22,8 @@ listingRouter.post("/update/:id", verifyToken, updateListing);
 listingRouter.get("/get/countListings", countListing);
 listingRouter.get("/get/maxPrice", maxPrice);
 listingRouter.get("/get/:id", getListing);
+listingRouter.post("/review/:id", verifyToken, addReview);
+
 listingRouter.get("/get", getListings);
 listingRouter.post("/create-checkout-session", verifyToken, sendOrder);
 listingRouter.post(`/updatePayment/:id`, verifyToken, paymentUpdateListing);

@@ -6,9 +6,11 @@ import { errorHandler } from "../utils/error.js";
 export const createListing = async (req, res, next) => {
   try {
     const listing = await Listing.create(req.body);
+    console.log("done");
     return res.status(201).json(listing);
   } catch (error) {
     next(error);
+    console.log("error");
   }
 };
 export const deleteListing = async (req, res, next) => {
@@ -58,6 +60,17 @@ export const getListing = async (req, res, next) => {
     next(error);
   }
 };
+export const addReview = async (req, res, next) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    return next(errorHandler(404, "Listing is Not Found"));
+  }
+  try {
+    listing.review.push(req.body);
+    } catch (error) {
+    next(error);
+  }};
+
 
 export const getListings = async (req, res, next) => {
   try {
@@ -204,7 +217,6 @@ export const paymentUpdateListing = async (req, res, next) => {
     );
     console.log({ updatedListing });
     res.status(200).json(updatedListing);
-  } catch (error) {
-    next(error);
-  }
-};
+
+  
+

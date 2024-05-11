@@ -7,6 +7,7 @@ export const test = (req, res) => {
 };
 
 export const getUserListings = async (req, res, next) => {
+  console.log("object");
   if (req.user.id === req.params.id) {
     try {
       const listings = await Listing.find({ userRef: req.params.id });
