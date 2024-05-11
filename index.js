@@ -25,9 +25,13 @@ mongoose
 const app = express();
 
 app.use(express.json());
-app.use(cors({ credentials: "true" }));
-
 app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.FRONT_END_URL, // FE URL
+  })
+);
 
 app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:3000`);
