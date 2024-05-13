@@ -47,8 +47,32 @@ export const updateUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
 
-  const { username, password, email } = req.body;
+export const updateUserFavorites = async (req, res, next) => {
+  console.log("updating favorites");
+  if (req.user.id !== req.params.id)
+    return next(
+      errorHandler(401, "you can only update your own favorite list!")
+    );
+
+  if (!req.body.favArray)
+    return next(errorHandler(400, "no favorite array sent in request"));
+
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) return next(errorHandler(404, "User not found!"));
+
+    user.favorites = req.body.favArray;
+
+    // console.log("favorites updated", user.favorites, req.body.favArray,req.body);
+    await user.save();
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteUser = async (req, res, next) => {

@@ -4,6 +4,7 @@ import {
   deleteUser,
   test,
   updateUser,
+  updateUserFavorites,
   getUserListings,
   getUser,
   getUsersCount,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.get("/test", test);
 router.post("/update/:id", verifyToken, updateUser);
+router.post("/updateFavorites/:id",verifyToken,updateUserFavorites)
 router.get("/listings/:id", verifyToken, getUserListings);
 router.delete("/delete/:id", verifyToken, deleteUser);
 router.get("/allUsers", getUsersCount);

@@ -1,6 +1,7 @@
 import stripe from "stripe";
 
 import Listing from "../models/listing.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createListing = async (req, res, next) => {
@@ -81,12 +82,34 @@ export const addReview = async (req, res, next) => {
     } else {
       listing.reviews.push(req.body);
     }
-  
-    const updatedListing = await listing.save();
-    console.log("sent to backend", req.body, "\nNEW", updatedListing);
-    res.status(200).json(updatedListing);
+
+    await listing.save();
+    console.log("sent to backend", req.body, "\nNEW", listing);
+    res.status(200).json(listing);
   } catch (error) {
     console.log("error", error);
+    next(error);
+  }
+};
+
+export const getFavoriteListings = async (req, res, next) => {
+  try {
+    
+    if (req.user.id !== req.params.id)
+      return next(
+        errorHandler(401, "you can only update your own favorite list!")
+      );
+
+    const user = await User.findById(req.params.id);
+    if (!user) return next(errorHandler(404, "User not found!"));
+
+    const listings = await Listing.find({
+      _id: { $in: user.favorites },
+    });
+    console.log("listings", listings);
+
+    return res.status(200).json(listings);
+  } catch (error) {
     next(error);
   }
 };
