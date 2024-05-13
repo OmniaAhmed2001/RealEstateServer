@@ -29,6 +29,7 @@ export const deleteListing = async (req, res, next) => {
     next(error);
   }
 };
+
 export const updateListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) {
@@ -60,17 +61,35 @@ export const getListing = async (req, res, next) => {
     next(error);
   }
 };
+
 export const addReview = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
+  //make sure user is a previous buyer or renter
+
   if (!listing) {
     return next(errorHandler(404, "Listing is Not Found"));
-  }
-  try {
-    listing.review.push(req.body);
-    } catch (error) {
-    next(error);
-  }};
+  } else if (!listing.previousBuyers.find((e) => e === req.body.id))
+    return next(errorHandler(403, "User is not a buyer/renter"));
 
+  const userIndex = listing.reviews.findIndex(
+    (review) => review.id === req.body.id
+  );
+  try {
+    //check if user already reviewed then update only
+    if (userIndex !== -1) {
+      listing.reviews[userIndex] = req.body;
+    } else {
+      listing.reviews.push(req.body);
+    }
+  
+    const updatedListing = await listing.save();
+    console.log("sent to backend", req.body, "\nNEW", updatedListing);
+    res.status(200).json(updatedListing);
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
+};
 
 export const getListings = async (req, res, next) => {
   try {
@@ -217,6 +236,7 @@ export const paymentUpdateListing = async (req, res, next) => {
     );
     console.log({ updatedListing });
     res.status(200).json(updatedListing);
-
-  
-
+  } catch (error) {
+    next(error);
+  }
+};

@@ -47,6 +47,7 @@ const listingSchema = new mongoose.Schema(
     },
     previousBuyers: {
       type: Array,
+      default:[],
     },
     offer: {
       type: Boolean,
@@ -56,8 +57,9 @@ const listingSchema = new mongoose.Schema(
       type: Array,
       required: true,
     },
-    review: {
+    reviews: {
       type: Array,
+      default: [],
     },
     userRef: {
       type: String,
