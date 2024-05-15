@@ -10,9 +10,23 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    address: {
+    property: {
       type: String,
       required: true,
+    },
+    address: {
+      street: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      country: {
+        type: String,
+        required: true,
+      },
     },
     regularPrice: {
       type: Number,
@@ -47,7 +61,7 @@ const listingSchema = new mongoose.Schema(
     },
     previousBuyers: {
       type: Array,
-      default:[],
+      default: [],
     },
     offer: {
       type: Boolean,
@@ -68,5 +82,6 @@ const listingSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 const Listing = mongoose.model("Listing", listingSchema);
 export default Listing;
