@@ -1,5 +1,35 @@
 import mongoose from "mongoose";
 
+const reviewSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+    },
+    avatar: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 const listingSchema = new mongoose.Schema(
   {
     name: {
@@ -12,20 +42,16 @@ const listingSchema = new mongoose.Schema(
     },
     property: {
       type: String,
-      required: true,
     },
     address: {
       street: {
         type: String,
-        required: true,
       },
       city: {
         type: String,
-        required: true,
       },
       country: {
         type: String,
-        required: true,
       },
     },
     regularPrice: {
@@ -72,7 +98,7 @@ const listingSchema = new mongoose.Schema(
       required: true,
     },
     reviews: {
-      type: Array,
+      type: [reviewSchema],
       default: [],
     },
     userRef: {

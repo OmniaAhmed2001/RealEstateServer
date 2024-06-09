@@ -76,9 +76,10 @@ export const addReview = async (req, res, next) => {
   try {
     //check if user already reviewed then update only
     if (userIndex !== -1) {
-      listing.reviews[userIndex] = req.body;
+      listing.reviews[userIndex]= req.body;
+      listing.reviews[userIndex].updatedAt = new Date(); // Update the updatedAt timestamp
     } else {
-      listing.reviews.push(req.body);
+      listing.reviews.push({ ...req.body});
     }
 
     await listing.save();
