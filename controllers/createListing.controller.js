@@ -76,10 +76,10 @@ export const addReview = async (req, res, next) => {
   try {
     //check if user already reviewed then update only
     if (userIndex !== -1) {
-      listing.reviews[userIndex]= req.body;
+      listing.reviews[userIndex] = req.body;
       listing.reviews[userIndex].updatedAt = new Date(); // Update the updatedAt timestamp
     } else {
-      listing.reviews.push({ ...req.body});
+      listing.reviews.push({ ...req.body });
     }
 
     await listing.save();
@@ -93,7 +93,6 @@ export const addReview = async (req, res, next) => {
 
 export const getFavoriteListings = async (req, res, next) => {
   try {
-    
     if (req.user.id !== req.params.id)
       return next(
         errorHandler(401, "you can only update your own favorite list!")
@@ -188,6 +187,27 @@ export const maxPrice = async (req, res, next) => {
       maxPrice: maxRegularPriceListing[0].regularPrice,
       name: maxRegularPriceListing[0].name,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const barChartRealEstateNumbers = async (req, res, next) => {
+  try {
+    const realEstateGroupByCity = await Listing.aggregate([
+      {
+        $group: {
+          _id: "$address.city",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    res.status(200).json(realEstateGroupByCity);
+    console.log("BarChart", realEstateGroupByCity);
   } catch (error) {
     next(error);
   }
