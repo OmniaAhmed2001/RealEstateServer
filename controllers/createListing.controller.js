@@ -213,6 +213,40 @@ export const barChartRealEstateNumbers = async (req, res, next) => {
   }
 };
 
+export const pieChartRealEstateTypeNumbers = async (req, res, next) => {
+  try {
+    const realEstateGroupByType = await Listing.aggregate([
+      {
+        $group: {
+          _id: "$property",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sorting by type
+      },
+      {
+        $addFields: {
+          label: "$_id",
+          value: "$count",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          label: 1,
+          value: 1,
+        },
+      },
+    ]).then((data) => data.map((item, index) => ({ ...item, id: index + 1 })));
+
+    res.status(200).json(realEstateGroupByType);
+    console.log("PieChart", realEstateGroupByType);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const sendOrder = async (req, res, next) => {
   try {
     const price = {
