@@ -170,6 +170,15 @@ export const countListing = async (req, res, next) => {
     next(error);
   }
 };
+export const listingsOffer = async (req, res, next) => {
+  try {
+    const offersCount = await Listing.countDocuments({ offer: true });
+    console.log("offersCount",offersCount)
+    return res.status(200).json({ offersCount });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const maxPrice = async (req, res, next) => {
   try {
